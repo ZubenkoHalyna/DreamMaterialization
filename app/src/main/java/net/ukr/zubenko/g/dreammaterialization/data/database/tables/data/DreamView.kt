@@ -18,8 +18,8 @@ class DreamView(dreamId: UUID,
         get() = mTop + mHeight
     val mCenter: PointF
         get() = PointF((mLeft + mRight)/2.0f, (mTop + mButtom)/2.0f)
-    val dream: Dream?
-        get() = DreamLab.getItem(mId)
+    val mRect: Rect
+        get() = Rect(mLeft, mTop, mRight, mButtom)
 
     fun copy(
         id: UUID = mId,
@@ -29,11 +29,7 @@ class DreamView(dreamId: UUID,
         height: Int = mHeight,
         angle: Int = mRotationAngle): DreamView
     {
-        val dream =
-            DreamView(id, left, top, width, height, angle)
-        DreamViewLab.update(dream)
-
-        return dream
+        return DreamView(id, left, top, width, height, angle)
     }
 
     fun move(x: Float, y: Float) {
@@ -46,4 +42,24 @@ class DreamView(dreamId: UUID,
         mRotationAngle += angle
         DreamViewLab.update(this)
     }
+
+    fun scale(multiplier: Double) {
+        var k = multiplier
+        if (k * mWidth < 100)
+            k = 100.0 / mWidth
+        if (k * mHeight < 100)
+            k = 100.0 / mHeight
+
+        mWidth = (k * mWidth).toInt()
+        mHeight = (k * mHeight).toInt()
+        DreamViewLab.update(this)
+    }
+
+    override fun equals(other: Any?) =
+        if (other is DreamView)
+            mId == other.mId
+        else false
+
+    override fun hashCode() = mId.hashCode()
+
 }

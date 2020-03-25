@@ -1,10 +1,7 @@
 package net.ukr.zubenko.g.dreammaterialization
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PointF
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -16,8 +13,8 @@ import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
 
 class Collage(context: Context, private val attrs: AttributeSet? = null): View(context, attrs) {
     val mDreamViews = mutableMapOf<DreamView, Bitmap>()
-    val touchEventData = TouchEventData()
-    var mMovingView: DreamView? = null
+    private val touchEventData = TouchEventData()
+    private var mMovingView: DreamView? = null
 
     companion object {
         private const val TAG = "collage_log"
@@ -29,18 +26,14 @@ class Collage(context: Context, private val attrs: AttributeSet? = null): View(c
     }
 
     fun load() {
-        Log.i(TAG, "load start")
         for (dream in DreamLab.mItems) {
-            Log.i(TAG, "read dream: ${dream.mId}")
             val mPictureFile = DreamLab.getPictureFile(dream)
             val dreamView = DreamViewLab.getItem(dream.mId)
-            Log.i(TAG, "read dreamView: ${dreamView?.mId}")
             dreamView?.let {
                 mDreamViews[dreamView] =
                     PictureUtils.getScaledBitmap(mPictureFile.path, dreamView.mWidth, dreamView.mHeight)
             }
         }
-        Log.i(TAG, "load end")
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -48,64 +41,50 @@ class Collage(context: Context, private val attrs: AttributeSet? = null): View(c
         for (pic in mDreamViews.keys) {
             mDreamViews[pic]?.let {
                 if (pic.mRotationAngle != 0) {
-                    canvas.rotate(-pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
+                    canvas.rotate(pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
                 }
 
-                canvas.drawBitmap(it, pic.mLeft.toFloat(), pic.mTop.toFloat(), BACKGROUND_COLOR)
+                canvas.drawBitmap(it, null, pic.mRect, BACKGROUND_COLOR)
 
                 if (pic.mRotationAngle != 0) {
-                    canvas.rotate(pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
+                    canvas.rotate(-pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
                 }
             }
         }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val current = PointF(event.x, event.y)
-
-        when (event.action) {
+        when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                Log.i(TouchEventData.TAG, "ACTION_DOWN")
+                Log.i(TAG, "ACTION_DOWN ${event.pointerCount}")
                 touchEventData.setOrigin(event)
-
-                val origin = touchEventData.OriginTouchPoints.first()
+                val origin = touchEventData.mOriginTouchPoints.first()
                 mMovingView = findDreamViewToMove(origin)
             }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                Log.i(TAG, "ACTION_POINTER_DOWN ${event.pointerCount}")
+                touchEventData.setOrigin(PointF(event.getX(1), event.getY(1)), event.pointerCount - 1)
+            }
             MotionEvent.ACTION_MOVE -> {
-                Log.i(TouchEventData.TAG, "ACTION_MOVE")
+                Log.i(TAG, "ACTION_MOVE")
+                touchEventData.setCurrent(event)
 
                 if (event.pointerCount == 1)
-                    mMovingView?.let {
-                        move(
-                            it,
-                            touchEventData.CurrentTouchPoints.firstOrNull() ?: touchEventData.OriginTouchPoints.first(),
-                            current
-                        )
-                        invalidate()
-                    }
+                    move()
 
-                if (event.pointerCount == 2)
-                    mMovingView?.let { view ->
-                        val current2 = PointF(event.getX(1), event.getY(1))
-                        touchEventData.CurrentTouchPoints.getOrNull(1)?.let { previousPoint ->
-                            rotate(
-                                view,
-                                previousPoint,
-                                current2
-                            )
-                            invalidate()
-                        }
-                    }
-
-                touchEventData.setCurrent(event)
+                if (event.pointerCount == 2) {
+                    scale()
+                    rotate()
+                }
+                invalidate()
             }
             MotionEvent.ACTION_UP -> {
-                Log.i(TouchEventData.TAG, "ACTION_UP")
+                Log.i(TAG, "ACTION_UP")
                 mMovingView = null
                 touchEventData.clear()
             }
             MotionEvent.ACTION_CANCEL -> {
-                Log.i(TouchEventData.TAG, "ACTION_CANCEL")
+                Log.i(TAG, "ACTION_CANCEL")
                 mMovingView = null
                 touchEventData.clear()
             }
@@ -125,15 +104,71 @@ class Collage(context: Context, private val attrs: AttributeSet? = null): View(c
         originTouchPoint.x > dreamView.mLeft && originTouchPoint.x < dreamView.mRight &&
                 originTouchPoint.y > dreamView.mTop && originTouchPoint.y < dreamView.mButtom
 
-    private fun move(dreamView: DreamView, origin:PointF, current: PointF) {
-        dreamView.move(current.x - origin.x, current.y - origin.y)
+    private fun move() {
+        val origin = touchEventData.mPreviousTouchPoints[0]
+        val current = touchEventData.mCurrentTouchPoints[0]
+        mMovingView?.move(current.x - origin.x, current.y - origin.y)
     }
 
-    private fun rotate(dreamView: DreamView, originTouchPoint: PointF, currentTouchPoint: PointF) {
-        val angle = ((currentTouchPoint.y - originTouchPoint.y)/height +
-                (currentTouchPoint.x - originTouchPoint.x)/width) * 180
+    private fun scale() {
+        val scaleParams = scaleMultiplier()
 
-        dreamView.rotate(angle.toInt())
+        mMovingView?.let {
+            val view = it.copy()
+            view.scale(scaleParams)
+            mDreamViews[view]?.let { b ->
+                mDreamViews.remove(view)
+                mDreamViews[view] = b
+            }
+        }
     }
 
+    private fun rotate() {
+        if (shouldRotate()) {
+            val previous = touchEventData.mPreviousTouchPoints.getOrNull(1) ?: touchEventData.mOriginTouchPoints[1]
+            val current = touchEventData.mCurrentTouchPoints[1]
+            var angle = ((current.y - previous.y) / height + (current.x - previous.x) / width) * 180
+
+            angle = Math.max(-10.0f, Math.min(10.0f, angle))
+            mMovingView?.rotate(angle.toInt())
+        }
+    }
+
+    private fun shouldRotate(): Boolean {
+        val origin1 = touchEventData.mOriginTouchPoints[0]
+        val origin2 = touchEventData.mOriginTouchPoints[1]
+        val current1 = touchEventData.mCurrentTouchPoints[0]
+        val current2 = touchEventData.mCurrentTouchPoints[1]
+
+        val vector1 = getVector(origin1, current1)
+        val vector2 = getVector(origin2, current2)
+        val vector3 = getVector(origin1, origin2)
+        val vector4 = getVector(current1, current2)
+
+        val z1 = vectorProduct(vector1, vector2)
+        val z2 = vectorProduct(vector3, vector4)
+
+        return Math.abs(z1 * 20.0) < Math.abs(z2)
+    }
+
+    private fun scaleMultiplier(): Double {
+        val origin1 = touchEventData.mOriginTouchPoints[0]
+        val origin2 = touchEventData.mOriginTouchPoints[1]
+        val current1 = touchEventData.mCurrentTouchPoints[0]
+        val current2 = touchEventData.mCurrentTouchPoints[1]
+
+        val vector1 = getVector(origin1, origin2)
+        val vector2 = getVector(current1, current2)
+
+        val d3 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y.toDouble())
+        val d4 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y.toDouble())
+
+        return Math.max(Math.min(3.0, d4/d3),0.33)
+    }
+
+    private fun getVector(start: PointF, end: PointF): PointF {
+        return PointF(end.x - start.x, end.y - start.y)
+    }
+
+    private fun vectorProduct(v1: PointF, v2: PointF): Float = v1.x * v2.y - v1.y * v2.x
 }

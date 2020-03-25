@@ -7,7 +7,16 @@ import android.R.attr.x
 import android.app.Activity
 import android.content.res.Configuration
 import android.graphics.Point
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
+import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
+import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 object PictureUtils {
@@ -47,5 +56,22 @@ object PictureUtils {
 
     fun getBitmap(path: String): Bitmap {
         return BitmapFactory.decodeFile(path, BitmapFactory.Options())
+    }
+
+    fun getPicture(activity: Activity, image: Uri): Bitmap {
+        return MediaStore.Images.Media.getBitmap(activity.contentResolver, image)
+    }
+
+    fun savePicture(bitmap: Bitmap, file: File) {
+        try {
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.close()
+
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }

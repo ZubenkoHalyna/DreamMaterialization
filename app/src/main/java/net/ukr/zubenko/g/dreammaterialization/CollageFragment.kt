@@ -1,27 +1,23 @@
 package net.ukr.zubenko.g.dreammaterialization
 
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.app.Fragment
-import android.support.v4.content.FileProvider
 import android.view.*
-import net.ukr.zubenko.g.dreammaterialization.PictureUtils.PICTURE_DIR
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
+import android.graphics.Bitmap
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
+import android.graphics.Point
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
-import java.io.File
+
 
 class CollageFragment: Fragment() {
     private lateinit var collage: Collage
-    private lateinit var mPictureFile: File
-    private var mDreamAdding: Dream? = null
-    private val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
     companion object {
-        const val REQUEST_PHOTO = 0
+        const val REQUEST_PICTURE = 0
         fun newInstance() = CollageFragment()
     }
 
@@ -40,44 +36,44 @@ class CollageFragment: Fragment() {
         }
 
     private fun getPic() {
-        val dream = Dream()
-        mDreamAdding = dream
-        mPictureFile = DreamLab.getPictureFile(dream)
-        val uri = FileProvider.getUriForFile(requireActivity(), PICTURE_DIR, DreamLab.getPictureFile(dream))
-        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        val cameraActivities = requireActivity().packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
-        for (activity in cameraActivities) {
-            requireActivity().grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        }
-        startActivityForResult(captureImage, REQUEST_PHOTO)
+        val photoPickerIntent = Intent(Intent.ACTION_PICK)
+        photoPickerIntent.type = "image/*"
+        startActivityForResult(photoPickerIntent, REQUEST_PICTURE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK)
+        if (resultCode != RESULT_OK)
             return
 
         when (requestCode) {
-            REQUEST_PHOTO -> {
-                if (mPictureFile.exists()) {
-                    mDreamAdding?.let { dream ->
-                        val dreamView = DreamView(
-                            dream.mId,
-                            100,
-                            100,
-                            collage.width / 3,
-                            collage.height / 3,
-                            0
-                        )
-                        val bitmap = PictureUtils.getScaledBitmap(mPictureFile.path, dreamView.mWidth, dreamView.mHeight)
-                        collage.mDreamViews[dreamView] = bitmap
-                        DreamLab.add(dream)
-                        DreamViewLab.add(dreamView)
-                        collage.invalidate()
-                    }
+            REQUEST_PICTURE -> {
+                data?.data?.let { imageUri ->
+                    val bitmap = PictureUtils.getPicture(requireActivity(), imageUri)
+                    val size = getBitmapSize(bitmap)
+
+                    val dream = Dream()
+                    val dreamView = DreamView(dream.mId, 100, 100, size.x, size.y, 0)
+                    DreamLab.add(dream)
+                    DreamViewLab.add(dreamView)
+                    collage.mDreamViews[dreamView] = bitmap
+                    collage.invalidate()
+
+                    PictureUtils.savePicture(bitmap, DreamLab.getPictureFile(dream))
                 }
-                mDreamAdding = null
             }
         }
+    }
+
+    private fun getBitmapSize(bitmap: Bitmap): Point {
+        var width = collage.width / 3
+        var height = collage.height / 3
+
+        if (bitmap.width > bitmap.height) {
+            width = bitmap.width * height / bitmap.height
+        } else {
+            height = bitmap.height * width / bitmap.width
+        }
+        return Point(width, height)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
