@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">DreamMaterialization</string>
+    <string name="app_name">Make dreams come true!</string>
     <string name="add_dream_menu_item_title">Add dream</string>
+    <string name="dream_title_hint">Name your dream</string>
+    <string name="dream_title">Title</string>
+    <string name="dream_description_hint">What is your dream?</string>
+    <string name="dream_description">Description</string>
 </resources>

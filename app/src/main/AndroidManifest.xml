@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="net.ukr.zubenko.g.dreammaterialization">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="net.ukr.zubenko.g.dreammaterialization">
 
-    <uses-permission android:name="android.permission.FLAG_GRANT_READ_URI_PERMISSION" />
+    <uses-permission android:name="android.permission.FLAG_GRANT_READ_URI_PERMISSION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-feature android:name="android.hardware.camera"
-                  android:required="false"/>
+
+    <uses-feature
+            android:name="android.hardware.camera"
+            android:required="false"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -22,15 +26,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="net.ukr.zubenko.g.dreammaterialization.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="net.ukr.zubenko.g.dreammaterialization.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/files"/>
         </provider>
+
+        <activity android:name=".DreamInfoActivity">
+        </activity>
     </application>
 
 </manifest>

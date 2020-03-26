@@ -17,9 +17,18 @@ class DreamView(dreamId: UUID,
     val mButtom: Int
         get() = mTop + mHeight
     val mCenter: PointF
-        get() = PointF((mLeft + mRight)/2.0f, (mTop + mButtom)/2.0f)
+        get() = PointF((mLeft + mRight) / 2.0f, (mTop + mButtom) / 2.0f)
     val mRect: Rect
         get() = Rect(mLeft, mTop, mRight, mButtom)
+    val mDream: Dream
+        get() {
+            var d = DreamLab.getItem(mId)
+            if (d == null) {
+                d = Dream(mId)
+                DreamLab.add(d)
+            }
+            return  d
+        }
 
     fun copy(
         id: UUID = mId,
@@ -27,8 +36,8 @@ class DreamView(dreamId: UUID,
         top: Int = mTop,
         width: Int = mWidth,
         height: Int = mHeight,
-        angle: Int = mRotationAngle): DreamView
-    {
+        angle: Int = mRotationAngle
+    ): DreamView {
         return DreamView(id, left, top, width, height, angle)
     }
 

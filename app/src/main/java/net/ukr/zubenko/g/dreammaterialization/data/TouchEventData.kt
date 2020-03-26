@@ -17,6 +17,9 @@ class TouchEventData {
     val size: Int
         get() = Math.min(mOriginTouchPoints.size, mCurrentTouchPoints.size)
 
+    val notMoved: Boolean
+        get() = mCurrentTouchPoints.isEmpty()
+
     fun setOrigin(event: MotionEvent) {
         for (i in 0 until event.pointerCount) {
             mOriginTouchPoints.add(i, PointF(event.getX(i), event.getY(i)))
@@ -40,11 +43,15 @@ class TouchEventData {
 
     fun clearCurrent() {
         mCurrentTouchPoints.clear()
+    }
+
+    fun clearPrevious() {
         previousTouchPoints = listOf()
     }
 
     fun clear() {
         clearCurrent()
+        clearPrevious()
         clearOrigin()
     }
 }

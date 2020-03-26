@@ -11,7 +11,7 @@ import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
 
-class Collage(context: Context, private val attrs: AttributeSet? = null): View(context, attrs) {
+class Collage(context: Context, attrs: AttributeSet? = null): View(context, attrs) {
     val mDreamViews = mutableMapOf<DreamView, Bitmap>()
     private val touchEventData = TouchEventData()
     private var mMovingView: DreamView? = null
@@ -80,6 +80,8 @@ class Collage(context: Context, private val attrs: AttributeSet? = null): View(c
             }
             MotionEvent.ACTION_UP -> {
                 Log.i(TAG, "ACTION_UP")
+                if (touchEventData.notMoved)
+                    onClick(event.x, event.y)
                 mMovingView = null
                 touchEventData.clear()
             }
@@ -91,6 +93,18 @@ class Collage(context: Context, private val attrs: AttributeSet? = null): View(c
         }
 
         return true
+    }
+
+    override fun performClick(): Boolean {
+        return super.performClick()
+    }
+
+    fun onClick(x: Float, y: Float) {
+        val dv = findDreamViewToMove(PointF(x, y))
+        dv?.let {
+            val intent = DreamInfoActivity.newIntent(context, dv.mDream)
+            context.startActivity(intent)
+        }
     }
 
     private fun findDreamViewToMove(point: PointF): DreamView? {
