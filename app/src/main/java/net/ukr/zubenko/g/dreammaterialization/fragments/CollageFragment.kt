@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization
+package net.ukr.zubenko.g.dreammaterialization.fragments
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -10,6 +10,9 @@ import android.graphics.Bitmap
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
 import android.graphics.Point
+import net.ukr.zubenko.g.dreammaterialization.views.Collage
+import net.ukr.zubenko.g.dreammaterialization.PictureUtils
+import net.ukr.zubenko.g.dreammaterialization.R
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
 
 
@@ -38,7 +41,9 @@ class CollageFragment: Fragment() {
     private fun getPic() {
         val photoPickerIntent = Intent(Intent.ACTION_PICK)
         photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, REQUEST_PICTURE)
+        startActivityForResult(photoPickerIntent,
+            REQUEST_PICTURE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -48,7 +53,8 @@ class CollageFragment: Fragment() {
         when (requestCode) {
             REQUEST_PICTURE -> {
                 data?.data?.let { imageUri ->
-                    val bitmap = PictureUtils.getPicture(requireActivity(), imageUri)
+                    val bitmap =
+                        PictureUtils.getPicture(requireActivity(), imageUri)
                     val size = getBitmapSize(bitmap)
 
                     val dream = Dream()
@@ -58,7 +64,10 @@ class CollageFragment: Fragment() {
                     collage.mDreamViews[dreamView] = bitmap
                     collage.invalidate()
 
-                    PictureUtils.savePicture(bitmap, DreamLab.getPictureFile(dream))
+                    PictureUtils.savePicture(
+                        bitmap,
+                        DreamLab.getPictureFile(dream)
+                    )
                 }
             }
         }

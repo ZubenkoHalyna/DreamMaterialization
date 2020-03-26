@@ -5,4 +5,7 @@
     <string name="dream_title">Title</string>
     <string name="dream_description_hint">What is your dream?</string>
     <string name="dream_description">Description</string>
+    <string name="picture_tab_title">Picture</string>
+    <string name="info_tab_title">Info</string>
+    <string name="tasks_tab_title">Tasks</string>
 </resources>

@@ -19,12 +19,16 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity android:name=".actvityes.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity android:name=".actvityes.TabPagerActivity"
+                  android:theme="@style/ToolbarTheme">
         </activity>
 
         <provider
@@ -36,9 +40,6 @@
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/files"/>
         </provider>
-
-        <activity android:name=".DreamInfoActivity">
-        </activity>
     </application>
 
 </manifest>

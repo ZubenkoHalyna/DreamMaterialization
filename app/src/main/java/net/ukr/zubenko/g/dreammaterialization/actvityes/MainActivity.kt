@@ -1,8 +1,9 @@
-package net.ukr.zubenko.g.dreammaterialization
+package net.ukr.zubenko.g.dreammaterialization.actvityes
 
 import android.support.v4.app.Fragment
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.DbBaseHelper
+import net.ukr.zubenko.g.dreammaterialization.fragments.CollageFragment
 
 class MainActivity : SingleFragmentActivity() {
     override fun createFragment(): Fragment {

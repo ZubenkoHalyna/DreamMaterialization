@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization
+package net.ukr.zubenko.g.dreammaterialization.actvityes
 
 import android.os.Bundle
 import android.support.v4.app.Fragment

@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization
+package net.ukr.zubenko.g.dreammaterialization.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import net.ukr.zubenko.g.dreammaterialization.R
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
 
 class DreamInfoFragment: Fragment() {
@@ -24,7 +25,7 @@ class DreamInfoFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_dream_info, container, false)
+        val view = inflater.inflate(R.layout.dream_info_fragment, container, false)
 
         mTitle = view.findViewById(R.id.dreamTitle)
         mTitle.setText(mDream.mTitle)

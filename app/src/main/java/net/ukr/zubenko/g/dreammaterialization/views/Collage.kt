@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization
+package net.ukr.zubenko.g.dreammaterialization.views
 
 import android.content.Context
 import android.graphics.*
@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import net.ukr.zubenko.g.dreammaterialization.PictureUtils
+import net.ukr.zubenko.g.dreammaterialization.actvityes.TabPagerActivity
 import net.ukr.zubenko.g.dreammaterialization.data.TouchEventData
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
@@ -21,7 +23,7 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
         private val BACKGROUND_COLOR = Paint()
 
         init {
-            BACKGROUND_COLOR.color = 0xfff8efe0.toInt()
+            BACKGROUND_COLOR.color = 0xffffffff.toInt()
         }
     }
 
@@ -31,7 +33,11 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
             val dreamView = DreamViewLab.getItem(dream.mId)
             dreamView?.let {
                 mDreamViews[dreamView] =
-                    PictureUtils.getScaledBitmap(mPictureFile.path, dreamView.mWidth, dreamView.mHeight)
+                    PictureUtils.getScaledBitmap(
+                        mPictureFile.path,
+                        dreamView.mWidth,
+                        dreamView.mHeight
+                    )
             }
         }
     }
@@ -44,7 +50,9 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
                     canvas.rotate(pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
                 }
 
-                canvas.drawBitmap(it, null, pic.mRect, BACKGROUND_COLOR)
+                canvas.drawBitmap(it, null, pic.mRect,
+                    BACKGROUND_COLOR
+                )
 
                 if (pic.mRotationAngle != 0) {
                     canvas.rotate(-pic.mRotationAngle.toFloat(), pic.mCenter.x, pic.mCenter.y)
@@ -95,14 +103,10 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
         return true
     }
 
-    override fun performClick(): Boolean {
-        return super.performClick()
-    }
-
     fun onClick(x: Float, y: Float) {
         val dv = findDreamViewToMove(PointF(x, y))
         dv?.let {
-            val intent = DreamInfoActivity.newIntent(context, dv.mDream)
+            val intent = TabPagerActivity.newIntent(context, dv.mDream)
             context.startActivity(intent)
         }
     }
