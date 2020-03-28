@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization.actvityes
+package net.ukr.zubenko.g.dreammaterialization.activities
 
 import android.support.v4.app.Fragment
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab

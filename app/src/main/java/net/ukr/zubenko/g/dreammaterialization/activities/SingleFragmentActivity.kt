@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization.actvityes
+package net.ukr.zubenko.g.dreammaterialization.activities
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,6 +13,7 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutResId())
+        title = resources.getString(R.string.main_menu_title)
 
         if (supportFragmentManager.findFragmentById(R.id.fragment_container) == null)
             supportFragmentManager

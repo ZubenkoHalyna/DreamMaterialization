@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
                                              android:layout_height="match_parent">
-
-    <TextView
-            android:id="@+id/textStub"
-            android:text="Tasks and habits to achieve you dream will be here"
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/tasks_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+            android:id="@+id/no_tasks_text"
+            android:text="@string/no_tasks_and_habits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="8dp"/>
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddTask"
+            android:src="@drawable/task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            app:rippleColor="@color/colorWhite"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:backgroundTint="@color/colorPrimary"
+            app:layout_constraintEnd_toStartOf="@+id/fabAddHabit"/>
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddHabit"
+            android:src="@drawable/habit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            app:rippleColor="@color/colorWhite"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_marginBottom="8dp"/>
 </android.support.constraint.ConstraintLayout>

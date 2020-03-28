@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      app:title="@string/main_menu_title">
     <item android:id="@+id/add_dream"
           android:icon="@android:drawable/ic_menu_add"
           android:title="@string/add_dream_menu_item_title"

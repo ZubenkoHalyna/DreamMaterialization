@@ -7,19 +7,20 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import net.ukr.zubenko.g.dreammaterialization.PictureUtils
-import net.ukr.zubenko.g.dreammaterialization.actvityes.TabPagerActivity
 import net.ukr.zubenko.g.dreammaterialization.data.TouchEventData
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
+import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
 
 class Collage(context: Context, attrs: AttributeSet? = null): View(context, attrs) {
     val mDreamViews = mutableMapOf<DreamView, Bitmap>()
     private val touchEventData = TouchEventData()
     private var mMovingView: DreamView? = null
+    lateinit var mStartDreamInfoActivity: (DreamView) -> Unit
 
     companion object {
-        private const val TAG = "collage_log"
+        private const val TAG = "collage_class_log"
         private val BACKGROUND_COLOR = Paint()
 
         init {
@@ -28,6 +29,7 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
     }
 
     fun load() {
+        Log.i(TAG, "start load")
         for (dream in DreamLab.mItems) {
             val mPictureFile = DreamLab.getPictureFile(dream)
             val dreamView = DreamViewLab.getItem(dream.mId)
@@ -106,9 +108,13 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
     fun onClick(x: Float, y: Float) {
         val dv = findDreamViewToMove(PointF(x, y))
         dv?.let {
-            val intent = TabPagerActivity.newIntent(context, dv.mDream)
-            context.startActivity(intent)
+            mStartDreamInfoActivity(dv)
         }
+    }
+
+    fun deleteDreamCallback(dream: Dream) {
+        mDreamViews.remove(DreamViewLab.getItem(dream.mId))
+        invalidate()
     }
 
     private fun findDreamViewToMove(point: PointF): DreamView? {
@@ -120,7 +126,7 @@ class Collage(context: Context, attrs: AttributeSet? = null): View(context, attr
 
     private fun shouldMoveDreamView(dreamView: DreamView, originTouchPoint: PointF) =
         originTouchPoint.x > dreamView.mLeft && originTouchPoint.x < dreamView.mRight &&
-                originTouchPoint.y > dreamView.mTop && originTouchPoint.y < dreamView.mButtom
+                originTouchPoint.y > dreamView.mTop && originTouchPoint.y < dreamView.mBottom
 
     private fun move() {
         val origin = touchEventData.mPreviousTouchPoints[0]

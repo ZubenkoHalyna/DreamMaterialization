@@ -5,15 +5,22 @@ import java.util.*
 import android.content.ContentValues
 import android.database.Cursor
 import android.util.Log
-import database.DbSchema
+import net.ukr.zubenko.g.dreammaterialization.data.database.DbSchema
 import net.ukr.zubenko.g.dreammaterialization.data.database.DbBaseHelper
 import net.ukr.zubenko.g.dreammaterialization.data.database.cursor.wrapper.BaseCursorWrapper
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DbItem
 
 abstract class Lab<T: DbItem> {
+
     protected abstract val tableName: String
     protected abstract fun getContentValues(item: T): ContentValues
     protected abstract fun getCursorWrapper(c: Cursor): BaseCursorWrapper<T>
+
+
+    companion object {
+        private const val TAG = "Lab_class_log"
+    }
+
     private val mDatabase: SQLiteDatabase
         get() = DbBaseHelper.mDatabase
 
@@ -52,7 +59,7 @@ abstract class Lab<T: DbItem> {
 
     fun add(item: T) {
         val res: Long = mDatabase.insert(tableName, null, getContentValues(item))
-        Log.i("add_dream_view", res.toString())
+        Log.i(TAG, "type: ${item.javaClass} id: ${item.mId} res: $res")
     }
 
     fun remove(item: T) {
@@ -68,8 +75,22 @@ abstract class Lab<T: DbItem> {
         )
     }
 
-    private fun queryItems(whereClause: String?, whereArgs: Array<String>?): BaseCursorWrapper<T> {
+    protected fun queryItems(whereClause: String?, whereArgs: Array<String>?): BaseCursorWrapper<T> {
+
         return getCursorWrapper(mDatabase.query(tableName, null, whereClause, whereArgs, null, null, null))
     }
 
+    fun selectByQuery(cursor: BaseCursorWrapper<T>): List<T> {
+        val items = mutableListOf<T>()
+        cursor.use {
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                cursor.getItem()?.let {
+                    items.add(it)
+                }
+                cursor.moveToNext()
+            }
+        }
+        return items
+    }
 }

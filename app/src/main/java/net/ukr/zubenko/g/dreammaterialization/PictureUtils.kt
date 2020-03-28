@@ -2,17 +2,11 @@ package net.ukr.zubenko.g.dreammaterialization
 
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
-import android.R.attr.y
-import android.R.attr.x
 import android.app.Activity
-import android.content.res.Configuration
 import android.graphics.Point
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
-import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -20,7 +14,8 @@ import java.io.IOException
 
 
 object PictureUtils {
-    const val PICTURE_DIR = "net.ukr.zubenko.g.dreammaterialization.fileprovider"
+    private const val PICTURE_DIR = "net.ukr.zubenko.g.dreammaterialization.fileprovider"
+    private const val TAG = "PictureUtils_class_log"
 
     fun getScaledBitmap(path: String, destWidth: Int, destHeight: Int): Bitmap {
         // Чтение размеров изображения на диске
@@ -56,6 +51,14 @@ object PictureUtils {
 
     fun getBitmap(path: String): Bitmap {
         return BitmapFactory.decodeFile(path, BitmapFactory.Options())
+    }
+
+    fun deletePicture(file: File) {
+        if (file.exists()) {
+            Log.i(TAG, "Deleting file: ${file.path}")
+            if (file.delete())
+                Log.i(TAG, "File deleted: ${file.path}")
+        }
     }
 
     fun getPicture(activity: Activity, image: Uri): Bitmap {

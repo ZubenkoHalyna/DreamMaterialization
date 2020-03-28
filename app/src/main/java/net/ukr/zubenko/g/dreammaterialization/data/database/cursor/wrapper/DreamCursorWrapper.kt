@@ -1,7 +1,7 @@
 package database
 
 import android.database.Cursor
-import database.DbSchema.DreamTable
+import net.ukr.zubenko.g.dreammaterialization.data.database.DbSchema.DreamTable
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
 import net.ukr.zubenko.g.dreammaterialization.data.database.cursor.wrapper.BaseCursorWrapper
 import java.util.*

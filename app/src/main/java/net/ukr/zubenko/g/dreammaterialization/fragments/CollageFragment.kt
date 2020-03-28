@@ -1,5 +1,6 @@
 package net.ukr.zubenko.g.dreammaterialization.fragments
 
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -13,14 +14,17 @@ import android.graphics.Point
 import net.ukr.zubenko.g.dreammaterialization.views.Collage
 import net.ukr.zubenko.g.dreammaterialization.PictureUtils
 import net.ukr.zubenko.g.dreammaterialization.R
+import net.ukr.zubenko.g.dreammaterialization.activities.TabPagerActivity
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamViewLab
 
 
 class CollageFragment: Fragment() {
     private lateinit var collage: Collage
+    private var mCurrentDreamView: DreamView? = null
 
     companion object {
         const val REQUEST_PICTURE = 0
+        const val REQUEST_DREAM_WAS_DELETED = 1
         fun newInstance() = CollageFragment()
     }
 
@@ -41,34 +45,44 @@ class CollageFragment: Fragment() {
     private fun getPic() {
         val photoPickerIntent = Intent(Intent.ACTION_PICK)
         photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent,
-            REQUEST_PICTURE
-        )
+        startActivityForResult(photoPickerIntent, REQUEST_PICTURE)
+    }
+
+    private fun startDreamInfoActivity(dv: DreamView) {
+        val intent = TabPagerActivity.newIntent(requireContext(), dv.mDream)
+        mCurrentDreamView = dv
+        startActivityForResult(intent, REQUEST_DREAM_WAS_DELETED)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != RESULT_OK)
-            return
-
         when (requestCode) {
             REQUEST_PICTURE -> {
-                data?.data?.let { imageUri ->
-                    val bitmap =
-                        PictureUtils.getPicture(requireActivity(), imageUri)
-                    val size = getBitmapSize(bitmap)
+                if (resultCode == RESULT_OK) {
+                    data?.data?.let { imageUri ->
+                        val bitmap =
+                            PictureUtils.getPicture(requireActivity(), imageUri)
+                        val size = getBitmapSize(bitmap)
 
-                    val dream = Dream()
-                    val dreamView = DreamView(dream.mId, 100, 100, size.x, size.y, 0)
-                    DreamLab.add(dream)
-                    DreamViewLab.add(dreamView)
-                    collage.mDreamViews[dreamView] = bitmap
-                    collage.invalidate()
+                        val dream = Dream()
+                        val dreamView = DreamView(dream.mId, 100, 100, size.x, size.y, 0)
+                        DreamLab.add(dream)
+                        DreamViewLab.add(dreamView)
+                        collage.mDreamViews[dreamView] = bitmap
+                        collage.invalidate()
 
-                    PictureUtils.savePicture(
-                        bitmap,
-                        DreamLab.getPictureFile(dream)
-                    )
+                        PictureUtils.savePicture(
+                            bitmap,
+                            DreamLab.getPictureFile(dream)
+                        )
+                    }
                 }
+            }
+
+            REQUEST_DREAM_WAS_DELETED -> {
+                if (resultCode == RESULT_CANCELED) {
+                    collage.mDreamViews.remove(mCurrentDreamView)
+                } else
+                    mCurrentDreamView = null
             }
         }
     }
@@ -94,6 +108,7 @@ class CollageFragment: Fragment() {
         val view = inflater.inflate(R.layout.collage_fragment, container, false)
 
         collage = view.findViewById(R.id.collage)
+        collage.mStartDreamInfoActivity = ::startDreamInfoActivity
         collage.load()
 
         return view

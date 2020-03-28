@@ -1,4 +1,4 @@
-package net.ukr.zubenko.g.dreammaterialization.actvityes
+package net.ukr.zubenko.g.dreammaterialization.activities
 
 import android.content.Context
 import android.content.Intent

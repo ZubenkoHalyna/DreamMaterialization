@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Make dreams come true!</string>
+    <string name="app_name">Dreamer</string>
+    <string name="main_menu_title">Make dreams come true!</string>
     <string name="add_dream_menu_item_title">Add dream</string>
     <string name="dream_title_hint">Name your dream</string>
     <string name="dream_title">Title</string>
@@ -8,4 +9,16 @@
     <string name="picture_tab_title">Picture</string>
     <string name="info_tab_title">Info</string>
     <string name="tasks_tab_title">Tasks</string>
+    <string name="habit_title">Title</string>
+    <string name="habit_frequency">Frequency: every</string>
+    <string name="habit_title_hint">Name for a habit</string>
+    <string name="habit_frequency_dimension">days</string>
+    <string name="habit_description_hint">Habit description</string>
+    <string name="task_title">Title</string>
+    <string name="task_title_hint">Name for a task</string>
+    <string name="task_description_hint">Task description</string>
+    <string name="task_deadline">Deadline</string>
+    <string name="date_picker_title">Deadline date:</string>
+    <string name="time_picker_title">Deadline time:</string>
+    <string name="no_tasks_and_habits">Tasks and habits to achieve you dream will be here</string>
 </resources>

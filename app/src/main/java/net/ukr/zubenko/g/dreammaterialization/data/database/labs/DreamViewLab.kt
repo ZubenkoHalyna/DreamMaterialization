@@ -2,10 +2,9 @@ package net.ukr.zubenko.g.dreammaterialization.data.database.labs
 
 import android.content.ContentValues
 import android.database.Cursor
-import database.DbSchema.DreamViewTable
+import net.ukr.zubenko.g.dreammaterialization.data.database.DbSchema.DreamViewTable
 import net.ukr.zubenko.g.dreammaterialization.data.database.cursor.wrapper.BaseCursorWrapper
 import net.ukr.zubenko.g.dreammaterialization.data.database.cursor.wrapper.DreamViewCursorWrapper
-import net.ukr.zubenko.g.dreammaterialization.data.database.labs.Lab
 import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.DreamView
 
 object DreamViewLab : Lab<DreamView>() {

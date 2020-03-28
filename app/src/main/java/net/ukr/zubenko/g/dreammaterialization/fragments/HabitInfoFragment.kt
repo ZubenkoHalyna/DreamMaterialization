@@ -9,47 +9,44 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import net.ukr.zubenko.g.dreammaterialization.R
-import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Dream
+import net.ukr.zubenko.g.dreammaterialization.data.database.tables.data.Habit
 
-class DreamInfoFragment: Fragment() {
+class HabitInfoFragment : Fragment() {
     private lateinit var mTitle: EditText
     private lateinit var mDescription: EditText
-    private lateinit var mDream: Dream
+    private lateinit var mPeriod: EditText
+    private lateinit var mHabit: Habit
 
     companion object {
-        fun getInstance(dream: Dream): Fragment {
-            val fr = DreamInfoFragment()
-            fr.mDream = dream
+        fun getInstance(habit: Habit): Fragment {
+            val fr = HabitInfoFragment()
+            fr.mHabit = habit
             return fr
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.dream_info_fragment, container, false)
+        val view = inflater.inflate(R.layout.habit_info_fragment, container, false)
 
-        if (! ::mDream.isInitialized)
-            Dream.getFromInstanceState(savedInstanceState)?.let { dream ->
-                mDream = dream
-            }
-
-        mTitle = view.findViewById(R.id.dreamTitle)
-        mTitle.setText(mDream.mTitle)
+        mTitle = view.findViewById(R.id.habitTitle)
+        mTitle.setText(mHabit.mTitle)
         mTitle.addTextChangedListener(getTextChangedListener { s ->
-            mDream = mDream.copy(title = s)
+            mHabit = mHabit.copy(title = s)
         })
 
-        mDescription = view.findViewById(R.id.dreamDescription)
-        mDescription.setText(mDream.mDescription)
+        mDescription = view.findViewById(R.id.habitDescription)
+        mDescription.setText(mHabit.mDescription)
         mDescription.addTextChangedListener(getTextChangedListener { s ->
-            mDream = mDream.copy(description = s)
+            mHabit = mHabit.copy(description = s)
+        })
+
+        mPeriod = view.findViewById(R.id.habitFrequency)
+        mPeriod.setText(mHabit.mPeriod.toString())
+        mPeriod.addTextChangedListener(getTextChangedListener{ s ->
+            mHabit = mHabit.copy(period = s.toInt())
         })
 
         return view
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Dream.saveToInstanceState(outState, mDream)
     }
 
     private fun getTextChangedListener(textChangeAction: (String) -> Unit) =
@@ -58,7 +55,7 @@ class DreamInfoFragment: Fragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 textChangeAction(s.toString())
             }
+
             override fun afterTextChanged(s: Editable) {}
         }
-
 }

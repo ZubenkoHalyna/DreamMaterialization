@@ -1,8 +1,4 @@
-package database
-
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import net.ukr.zubenko.g.dreammaterialization.data.database.DbBaseHelper
+package net.ukr.zubenko.g.dreammaterialization.data.database
 
 class DbSchema {
     companion object {
@@ -31,6 +27,30 @@ class DbSchema {
             const val WIDTH = "width"
             const val HEIGHT = "height"
             const val ANGLE = "angle"
+        }
+    }
+
+    object TaskTable {
+        const val NAME = "tasks"
+
+        object Cols {
+            const val UUID = UUID_COL
+            const val DREAM_UUID = "dream_uuid"
+            const val TITLE = "title"
+            const val DESCRIPTION = "description"
+            const val DEADLINE = "deadline"
+        }
+    }
+
+    object HabitTable {
+        const val NAME = "habits"
+
+        object Cols {
+            const val UUID = UUID_COL
+            const val DREAM_UUID = "dream_uuid"
+            const val TITLE = "title"
+            const val DESCRIPTION = "description"
+            const val PERIOD = "period"
         }
     }
 }

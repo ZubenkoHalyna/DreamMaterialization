@@ -14,12 +14,12 @@ class DreamView(dreamId: UUID,
                 var mRotationAngle: Int): DbItem(dreamId) {
     val mRight: Int
         get() = mLeft + mWidth
-    val mButtom: Int
+    val mBottom: Int
         get() = mTop + mHeight
     val mCenter: PointF
-        get() = PointF((mLeft + mRight) / 2.0f, (mTop + mButtom) / 2.0f)
+        get() = PointF((mLeft + mRight) / 2.0f, (mTop + mBottom) / 2.0f)
     val mRect: Rect
-        get() = Rect(mLeft, mTop, mRight, mButtom)
+        get() = Rect(mLeft, mTop, mRight, mBottom)
     val mDream: Dream
         get() {
             var d = DreamLab.getItem(mId)

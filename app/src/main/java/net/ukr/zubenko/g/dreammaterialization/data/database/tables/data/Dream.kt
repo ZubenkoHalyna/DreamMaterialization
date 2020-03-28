@@ -1,5 +1,6 @@
 package net.ukr.zubenko.g.dreammaterialization.data.database.tables.data
 
+import android.os.Bundle
 import net.ukr.zubenko.g.dreammaterialization.data.database.labs.DreamLab
 import java.util.*
 
@@ -19,5 +20,23 @@ class Dream(mId: UUID = UUID.randomUUID(),
         DreamLab.update(dream)
 
         return dream
+    }
+
+    companion object {
+        private const val DREAM_ID = "dream_id"
+        fun getFromInstanceState(savedInstanceState: Bundle?): Dream? {
+            savedInstanceState?.let {
+                it.getString(DREAM_ID)?.let { id ->
+                    DreamLab.getItem(UUID.fromString(id))?.let { dream ->
+                        return dream
+                    }
+                }
+            }
+            return null
+        }
+
+        fun saveToInstanceState(outState: Bundle, dream: Dream) {
+            outState.putString(DREAM_ID, dream.mId.toString())
+        }
     }
 }
