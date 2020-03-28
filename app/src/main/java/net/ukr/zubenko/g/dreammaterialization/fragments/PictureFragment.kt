@@ -1,6 +1,5 @@
 package net.ukr.zubenko.g.dreammaterialization.fragments
 
-import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -19,6 +18,7 @@ class PictureFragment: Fragment() {
     private lateinit var mDeleteDream: FloatingActionButton
 
     companion object {
+        const val RESULT_DREAM_DELETED = 2
         fun getInstance(dream: Dream): Fragment {
             val fr = PictureFragment()
             fr.mDream = dream
@@ -37,7 +37,7 @@ class PictureFragment: Fragment() {
         mDeleteDream.setOnClickListener {
             if(::mDream.isInitialized) {
                 DreamLab.deleteRecursively(mDream)
-                requireActivity().setResult(Activity.RESULT_CANCELED)
+                requireActivity().setResult(RESULT_DREAM_DELETED)
                 requireActivity().onBackPressed()
             }
         }

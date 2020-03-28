@@ -79,10 +79,9 @@ class CollageFragment: Fragment() {
             }
 
             REQUEST_DREAM_WAS_DELETED -> {
-                if (resultCode == RESULT_CANCELED) {
+                if (resultCode == PictureFragment.RESULT_DREAM_DELETED) {
                     collage.mDreamViews.remove(mCurrentDreamView)
-                } else
-                    mCurrentDreamView = null
+                }
             }
         }
     }
