@@ -17,6 +17,11 @@ object TaskLab: Lab<Task>() {
         return selectByQuery(cursor)
     }
 
+    fun removeTasks(dream: Dream) {
+        val uuidString = dream.mId.toString()
+        mDatabase.delete(TaskTable.NAME, TaskTable.Cols.DREAM_UUID + " = ?", arrayOf(uuidString))
+    }
+
     override fun getContentValues(item: Task): ContentValues {
         val values = ContentValues()
         values.put(TaskTable.Cols.UUID, item.mId.toString())

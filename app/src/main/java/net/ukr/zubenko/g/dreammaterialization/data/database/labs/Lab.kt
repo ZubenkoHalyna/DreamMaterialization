@@ -21,7 +21,7 @@ abstract class Lab<T: DbItem> {
         private const val TAG = "Lab_class_log"
     }
 
-    private val mDatabase: SQLiteDatabase
+    protected val mDatabase: SQLiteDatabase
         get() = DbBaseHelper.mDatabase
 
     val mItems: List<T>

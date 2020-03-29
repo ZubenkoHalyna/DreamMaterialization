@@ -47,15 +47,11 @@ object DreamLab : Lab<Dream>() {
             Log.i(TAG, "DreamView deleted (${dream.mId})")
         }
 
-        for (task in TaskLab.getTasksByDream(dream)) {
-            TaskLab.remove(task)
-            Log.i(TAG, "Task deleted (${task.mId})")
-        }
+        TaskLab.removeTasks(dream)
+        Log.i(TAG, "Tasks for dream (${dream.mId}) deleted ")
 
-        for (habit in HabitLab.getHabitsByDream(dream)) {
-            HabitLab.remove(habit)
-            Log.i(TAG, "Habit deleted (${habit.mId})")
-        }
+        HabitLab.removeHabits(dream)
+        Log.i(TAG, "Habits for (${dream.mId}) dream deleted ")
 
         remove(dream)
         Log.i(TAG, "Dream deleted (${dream.mId})")

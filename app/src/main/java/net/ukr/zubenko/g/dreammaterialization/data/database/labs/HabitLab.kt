@@ -17,6 +17,11 @@ object HabitLab: Lab<Habit>() {
         return selectByQuery(cursor)
     }
 
+    fun removeHabits(dream: Dream) {
+        val uuidString = dream.mId.toString()
+        mDatabase.delete(HabitTable.NAME, HabitTable.Cols.DREAM_UUID + " = ?", arrayOf(uuidString))
+    }
+
     override fun getContentValues(item: Habit): ContentValues {
         val values = ContentValues()
         values.put(HabitTable.Cols.UUID, item.mId.toString())
